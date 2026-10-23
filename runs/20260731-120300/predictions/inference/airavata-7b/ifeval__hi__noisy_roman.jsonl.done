@@ -1,0 +1,11 @@
+{
+  "records": 300,
+  "model": "airavata-7b",
+  "shard": "ifeval__hi__noisy_roman",
+  "generated": 300,
+  "resumed": 0,
+  "correct": 43,
+  "parse_failed": 0,
+  "truncated": 240,
+  "stale_regenerated": 0
+}

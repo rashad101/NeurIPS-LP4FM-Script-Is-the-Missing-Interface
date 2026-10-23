@@ -1,0 +1,11 @@
+{
+  "records": 100,
+  "model": "sarvam-m",
+  "shard": "ifeval__hi__native",
+  "generated": 100,
+  "resumed": 0,
+  "correct": 13,
+  "parse_failed": 0,
+  "truncated": 27,
+  "stale_regenerated": 0
+}

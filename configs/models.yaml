@@ -1,0 +1,70 @@
+# Model roster (spec §3).
+#
+# H2 is a *variance* claim, so at least two Indic-specialised models must be
+# enabled for the headline figure to mean anything.
+#
+# Memory notes for a single 48 GB card:
+#   - 8B  bf16  ~16 GB weights  -> comfortable
+#   - 12B bf16  ~24 GB weights  -> comfortable
+#   - 24B bf16  ~48 GB weights  -> does NOT fit; use quantization: fp8
+# Run one model at a time (the default); the driver tears the engine down
+# between models so memory is released.
+
+models:
+  # ---------------- generalist open baselines ----------------
+  - name: llama-3.1-8b-instruct
+    hf_id: meta-llama/Llama-3.1-8B-Instruct
+    role: generalist
+    backend: vllm
+    enabled: true
+    gated: true          # requires `hf auth login` + accepted license
+    max_model_len: 4096
+
+  - name: gemma-3-12b-it
+    hf_id: google/gemma-3-12b-it
+    role: generalist
+    backend: vllm
+    enabled: true
+    gated: true
+    max_model_len: 4096
+
+  - name: qwen3-8b
+    hf_id: Qwen/Qwen3-8B
+    role: multilingual-generalist
+    backend: vllm
+    enabled: true
+    max_model_len: 4096
+    # Qwen3 emits <think> blocks unless told otherwise; the prompt builder
+    # appends the no-think directive when this is set.
+    disable_thinking: true
+
+  # ---------------- Indic-specialised (>= 2 required for H2) ----------------
+  - name: sarvam-m
+    hf_id: sarvamai/sarvam-m
+    role: indic-specialised
+    backend: vllm
+    enabled: true
+    quantization: fp8    # 24B: bf16 weights alone exceed 48 GB
+    max_model_len: 4096
+
+  - name: airavata-7b
+    hf_id: ai4bharat/Airavata
+    role: indic-specialised
+    backend: vllm
+    enabled: true
+    max_model_len: 4096
+
+  - name: nanda-10b-chat
+    hf_id: MBZUAI/Llama-3-Nanda-10B-Chat
+    role: indic-specialised
+    backend: vllm
+    enabled: true        # third specialised model: n=3 for H2's variance claim
+    max_model_len: 4096
+
+  # ---------------- optional frontier reference ----------------
+  - name: claude-opus-5
+    hf_id: null
+    api_model: claude-opus-5
+    role: frontier-reference
+    backend: anthropic
+    enabled: false       # needs ANTHROPIC_API_KEY; costs money

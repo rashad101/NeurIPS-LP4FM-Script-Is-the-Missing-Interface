@@ -1,0 +1,11 @@
+{
+  "records": 60,
+  "model": "gemma-3-12b-it",
+  "shard": "milu__mr__native",
+  "generated": 60,
+  "resumed": 0,
+  "correct": 30,
+  "parse_failed": 0,
+  "truncated": 0,
+  "stale_regenerated": 0
+}

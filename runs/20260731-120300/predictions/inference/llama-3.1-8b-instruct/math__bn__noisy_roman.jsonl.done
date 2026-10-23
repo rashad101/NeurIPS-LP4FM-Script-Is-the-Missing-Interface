@@ -1,0 +1,11 @@
+{
+  "records": 450,
+  "model": "llama-3.1-8b-instruct",
+  "shard": "math__bn__noisy_roman",
+  "generated": 450,
+  "resumed": 0,
+  "correct": 49,
+  "parse_failed": 6,
+  "truncated": 133,
+  "stale_regenerated": 0
+}

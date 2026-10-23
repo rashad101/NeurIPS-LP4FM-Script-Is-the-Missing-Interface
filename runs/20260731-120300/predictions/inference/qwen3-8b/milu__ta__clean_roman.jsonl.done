@@ -1,0 +1,11 @@
+{
+  "records": 60,
+  "model": "qwen3-8b",
+  "shard": "milu__ta__clean_roman",
+  "generated": 60,
+  "resumed": 0,
+  "correct": 16,
+  "parse_failed": 3,
+  "truncated": 6,
+  "stale_regenerated": 0
+}

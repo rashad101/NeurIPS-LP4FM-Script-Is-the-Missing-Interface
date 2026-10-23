@@ -1,0 +1,11 @@
+{
+  "records": 60,
+  "model": "qwen3-8b",
+  "shard": "milu__hi__codemix",
+  "generated": 60,
+  "resumed": 0,
+  "correct": 32,
+  "parse_failed": 10,
+  "truncated": 17,
+  "stale_regenerated": 0
+}

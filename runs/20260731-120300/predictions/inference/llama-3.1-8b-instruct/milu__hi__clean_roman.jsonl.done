@@ -1,0 +1,11 @@
+{
+  "records": 60,
+  "model": "llama-3.1-8b-instruct",
+  "shard": "milu__hi__clean_roman",
+  "generated": 60,
+  "resumed": 0,
+  "correct": 19,
+  "parse_failed": 0,
+  "truncated": 0,
+  "stale_regenerated": 0
+}

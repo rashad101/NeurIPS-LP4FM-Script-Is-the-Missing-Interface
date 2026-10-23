@@ -1,0 +1,959 @@
+{
+  "run_id": "20260731-120300",
+  "environment": {
+    "python": "3.11.13",
+    "platform": "Linux-6.8.0-85-generic-x86_64-with-glibc2.39",
+    "git_sha": "a787ff9",
+    "cwd": "/workspace/Position-Script-Is-the-Missing-Interface",
+    "caches": {
+      "HF_HOME": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/huggingface",
+      "HF_DATASETS_CACHE": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/huggingface/datasets",
+      "TORCH_HOME": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/torch",
+      "VLLM_CACHE_ROOT": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/vllm",
+      "TRITON_CACHE_DIR": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/triton",
+      "TIKTOKEN_CACHE_DIR": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/tiktoken",
+      "MPLCONFIGDIR": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/matplotlib",
+      "XDG_CACHE_HOME": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/xdg",
+      "TMPDIR": "/workspace/Position-Script-Is-the-Missing-Interface/.cache/tmp",
+      "HOME": "/root"
+    },
+    "torch": "2.11.0+cu130",
+    "cuda_available": true,
+    "gpus": [
+      {
+        "name": "NVIDIA RTX PRO 6000 Blackwell Workstation Edition",
+        "total_gb": 95.0
+      }
+    ]
+  },
+  "stages": {
+    "download": {
+      "started_at": "2026-07-31T12:03:19+0000",
+      "config": {
+        "config": {
+          "seed": 20260730,
+          "data": {
+            "out_dir": "data/suite",
+            "noisy_samples": 3,
+            "roundtrip_threshold": 0.95,
+            "milu": {
+              "enabled": true,
+              "hf_dataset": "ai4bharat/MILU",
+              "split": "test",
+              "languages": [
+                "Hindi",
+                "Tamil",
+                "Telugu",
+                "Bengali",
+                "Marathi"
+              ],
+              "n_per_language": 60
+            },
+            "math": {
+              "enabled": true,
+              "hf_dataset": "juletxara/mgsm",
+              "split": "test",
+              "languages": [
+                "bn",
+                "te"
+              ],
+              "n_per_language": 150,
+              "indicgenbench": {
+                "enabled": false,
+                "hf_dataset": "ai4bharat/IndicGenBench_crosssum_in",
+                "languages": [
+                  "hi"
+                ],
+                "n_per_language": 150
+              }
+            },
+            "ifeval": {
+              "enabled": true,
+              "n_items": 100,
+              "language": "hi"
+            },
+            "safety": {
+              "enabled": true,
+              "hf_dataset": "DAMO-NLP-SG/MultiJail",
+              "split": "train",
+              "languages": [
+                "bn"
+              ],
+              "n_items": 100,
+              "translate_to": [],
+              "translate_with": "ai4bharat/indictrans2-en-indic-1B",
+              "local_file": null
+            },
+            "dakshina": {
+              "enabled": false,
+              "auto_download": false,
+              "root": "data/dakshina",
+              "url": "https://storage.googleapis.com/gresearch/dakshina/dakshina_dataset_v1.0.tar",
+              "splits": [
+                "train",
+                "dev"
+              ],
+              "calibrate_max_pairs": 20000
+            },
+            "arabizi": {
+              "enabled": false,
+              "hf_dataset": "openai/MMMLU",
+              "hf_config": "AR_XY",
+              "split": "test",
+              "n_items": 100
+            }
+          },
+          "transforms": {
+            "clean_roman": {
+              "scheme": "ISO",
+              "strip_diacritics": true
+            },
+            "noisy_roman": {
+              "char_swap": 0.03,
+              "sms_isms": 0.25,
+              "aspiration_drop": 0.038,
+              "gemination_collapse": 0.294,
+              "long_vowel_collapse": 0.356,
+              "schwa_deletion": 0.052,
+              "sibilant_swap": 0.179,
+              "vowel_ending_drop": 0.353
+            },
+            "noisy_roman_by_language": {
+              "bn": {
+                "aspiration_drop": 0.054,
+                "gemination_collapse": 0.207,
+                "long_vowel_collapse": 0.441,
+                "schwa_deletion": 0.063,
+                "sibilant_swap": 0.242,
+                "vowel_ending_drop": 0.494
+              },
+              "hi": {
+                "aspiration_drop": 0.013,
+                "gemination_collapse": 0.233,
+                "long_vowel_collapse": 0.364,
+                "schwa_deletion": 0.116,
+                "sibilant_swap": 0.038,
+                "vowel_ending_drop": 0.536
+              },
+              "mr": {
+                "aspiration_drop": 0.01,
+                "gemination_collapse": 0.137,
+                "long_vowel_collapse": 0.222,
+                "schwa_deletion": 0.072,
+                "sibilant_swap": 0.059,
+                "vowel_ending_drop": 0.438
+              },
+              "ta": {
+                "gemination_collapse": 0.408,
+                "long_vowel_collapse": 0.0,
+                "schwa_deletion": 0.007,
+                "sibilant_swap": 0.333,
+                "vowel_ending_drop": 0.141
+              },
+              "te": {
+                "aspiration_drop": 0.092,
+                "gemination_collapse": 0.096,
+                "long_vowel_collapse": 0.333,
+                "schwa_deletion": 0.007,
+                "sibilant_swap": 0.34,
+                "vowel_ending_drop": 0.015
+              }
+            },
+            "native_noisy": {
+              "matra_drop": 0.12,
+              "matra_swap": 0.12,
+              "nukta_drop": 0.3,
+              "anusvara_swap": 0.25,
+              "char_swap": 0.03,
+              "virama_drop": 0.08
+            },
+            "codemix": {
+              "insertion_rate": 0.3,
+              "max_insertions": 6
+            }
+          },
+          "inference": {
+            "backend": "vllm",
+            "batch_size": 32,
+            "max_new_tokens": {
+              "milu": 24,
+              "math": 512,
+              "ifeval": 640,
+              "safety": 384,
+              "arabizi": 24
+            },
+            "temperature": 0.0,
+            "top_p": 1.0,
+            "checkpoint_every": 10,
+            "isolate_models": "auto",
+            "continue_on_model_error": true,
+            "min_free_fraction": 0.8,
+            "vllm": {
+              "gpu_memory_utilization": 0.9,
+              "max_model_len": 4096,
+              "dtype": "bfloat16",
+              "enforce_eager": false,
+              "swap_space": 4,
+              "chunk_size": 64
+            }
+          },
+          "metrics": {
+            "out_name": "script_gap_results.parquet",
+            "bootstrap_samples": 2000,
+            "include_text": true
+          },
+          "decompose": {
+            "enabled": true,
+            "n_failures_per_model": 100,
+            "judge_backend": "anthropic",
+            "judge_model": "claude-opus-5",
+            "judge_effort": "high",
+            "human_check_n": 30
+          },
+          "fertility": {
+            "external_tokenizers": [
+              "meta-llama/Llama-3.1-8B-Instruct",
+              "google/gemma-3-12b-it",
+              "Qwen/Qwen3-8B"
+            ],
+            "tiktoken_encodings": [
+              "cl100k_base",
+              "o200k_base"
+            ]
+          },
+          "figures": {
+            "formats": [
+              "pdf",
+              "png"
+            ],
+            "dpi": 200
+          },
+          "models": [
+            {
+              "name": "llama-3.1-8b-instruct",
+              "hf_id": "meta-llama/Llama-3.1-8B-Instruct",
+              "role": "generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "gated": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "gemma-3-12b-it",
+              "hf_id": "google/gemma-3-12b-it",
+              "role": "generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "gated": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "qwen3-8b",
+              "hf_id": "Qwen/Qwen3-8B",
+              "role": "multilingual-generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096,
+              "disable_thinking": true
+            },
+            {
+              "name": "sarvam-m",
+              "hf_id": "sarvamai/sarvam-m",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "quantization": "fp8",
+              "max_model_len": 4096
+            },
+            {
+              "name": "airavata-7b",
+              "hf_id": "ai4bharat/Airavata",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "nanda-10b-chat",
+              "hf_id": "MBZUAI/Llama-3-Nanda-10B-Chat",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "claude-opus-5",
+              "hf_id": null,
+              "api_model": "claude-opus-5",
+              "role": "frontier-reference",
+              "backend": "anthropic",
+              "enabled": false
+            }
+          ]
+        },
+        "args": {
+          "command": "download",
+          "config": [
+            "configs/models.yaml"
+          ],
+          "overrides": [],
+          "run_id": "20260731-120300",
+          "run_prefix": null,
+          "log_level": "INFO",
+          "no_progress": false,
+          "model": [],
+          "force": false,
+          "skip_models": false,
+          "skip_data": false,
+          "dakshina": false
+        }
+      }
+    },
+    "build-data": {
+      "started_at": "2026-07-31T12:03:30+0000",
+      "config": {
+        "config": {
+          "seed": 20260730,
+          "data": {
+            "out_dir": "data/suite",
+            "noisy_samples": 3,
+            "roundtrip_threshold": 0.95,
+            "milu": {
+              "enabled": true,
+              "hf_dataset": "ai4bharat/MILU",
+              "split": "test",
+              "languages": [
+                "Hindi",
+                "Tamil",
+                "Telugu",
+                "Bengali",
+                "Marathi"
+              ],
+              "n_per_language": 60
+            },
+            "math": {
+              "enabled": true,
+              "hf_dataset": "juletxara/mgsm",
+              "split": "test",
+              "languages": [
+                "bn",
+                "te"
+              ],
+              "n_per_language": 150,
+              "indicgenbench": {
+                "enabled": false,
+                "hf_dataset": "ai4bharat/IndicGenBench_crosssum_in",
+                "languages": [
+                  "hi"
+                ],
+                "n_per_language": 150
+              }
+            },
+            "ifeval": {
+              "enabled": true,
+              "n_items": 100,
+              "language": "hi"
+            },
+            "safety": {
+              "enabled": true,
+              "hf_dataset": "DAMO-NLP-SG/MultiJail",
+              "split": "train",
+              "languages": [
+                "bn"
+              ],
+              "n_items": 100,
+              "translate_to": [],
+              "translate_with": "ai4bharat/indictrans2-en-indic-1B",
+              "local_file": null
+            },
+            "dakshina": {
+              "enabled": false,
+              "auto_download": false,
+              "root": "data/dakshina",
+              "url": "https://storage.googleapis.com/gresearch/dakshina/dakshina_dataset_v1.0.tar",
+              "splits": [
+                "train",
+                "dev"
+              ],
+              "calibrate_max_pairs": 20000
+            },
+            "arabizi": {
+              "enabled": false,
+              "hf_dataset": "openai/MMMLU",
+              "hf_config": "AR_XY",
+              "split": "test",
+              "n_items": 100
+            }
+          },
+          "transforms": {
+            "clean_roman": {
+              "scheme": "ISO",
+              "strip_diacritics": true
+            },
+            "noisy_roman": {
+              "char_swap": 0.03,
+              "sms_isms": 0.25,
+              "aspiration_drop": 0.038,
+              "gemination_collapse": 0.294,
+              "long_vowel_collapse": 0.356,
+              "schwa_deletion": 0.052,
+              "sibilant_swap": 0.179,
+              "vowel_ending_drop": 0.353
+            },
+            "noisy_roman_by_language": {
+              "bn": {
+                "aspiration_drop": 0.054,
+                "gemination_collapse": 0.207,
+                "long_vowel_collapse": 0.441,
+                "schwa_deletion": 0.063,
+                "sibilant_swap": 0.242,
+                "vowel_ending_drop": 0.494
+              },
+              "hi": {
+                "aspiration_drop": 0.013,
+                "gemination_collapse": 0.233,
+                "long_vowel_collapse": 0.364,
+                "schwa_deletion": 0.116,
+                "sibilant_swap": 0.038,
+                "vowel_ending_drop": 0.536
+              },
+              "mr": {
+                "aspiration_drop": 0.01,
+                "gemination_collapse": 0.137,
+                "long_vowel_collapse": 0.222,
+                "schwa_deletion": 0.072,
+                "sibilant_swap": 0.059,
+                "vowel_ending_drop": 0.438
+              },
+              "ta": {
+                "gemination_collapse": 0.408,
+                "long_vowel_collapse": 0.0,
+                "schwa_deletion": 0.007,
+                "sibilant_swap": 0.333,
+                "vowel_ending_drop": 0.141
+              },
+              "te": {
+                "aspiration_drop": 0.092,
+                "gemination_collapse": 0.096,
+                "long_vowel_collapse": 0.333,
+                "schwa_deletion": 0.007,
+                "sibilant_swap": 0.34,
+                "vowel_ending_drop": 0.015
+              }
+            },
+            "native_noisy": {
+              "matra_drop": 0.12,
+              "matra_swap": 0.12,
+              "nukta_drop": 0.3,
+              "anusvara_swap": 0.25,
+              "char_swap": 0.03,
+              "virama_drop": 0.08
+            },
+            "codemix": {
+              "insertion_rate": 0.3,
+              "max_insertions": 6
+            }
+          },
+          "inference": {
+            "backend": "vllm",
+            "batch_size": 32,
+            "max_new_tokens": {
+              "milu": 24,
+              "math": 512,
+              "ifeval": 640,
+              "safety": 384,
+              "arabizi": 24
+            },
+            "temperature": 0.0,
+            "top_p": 1.0,
+            "checkpoint_every": 10,
+            "isolate_models": "auto",
+            "continue_on_model_error": true,
+            "min_free_fraction": 0.8,
+            "vllm": {
+              "gpu_memory_utilization": 0.9,
+              "max_model_len": 4096,
+              "dtype": "bfloat16",
+              "enforce_eager": false,
+              "swap_space": 4,
+              "chunk_size": 64
+            }
+          },
+          "metrics": {
+            "out_name": "script_gap_results.parquet",
+            "bootstrap_samples": 2000,
+            "include_text": true
+          },
+          "decompose": {
+            "enabled": true,
+            "n_failures_per_model": 100,
+            "judge_backend": "anthropic",
+            "judge_model": "claude-opus-5",
+            "judge_effort": "high",
+            "human_check_n": 30
+          },
+          "fertility": {
+            "external_tokenizers": [
+              "meta-llama/Llama-3.1-8B-Instruct",
+              "google/gemma-3-12b-it",
+              "Qwen/Qwen3-8B"
+            ],
+            "tiktoken_encodings": [
+              "cl100k_base",
+              "o200k_base"
+            ]
+          },
+          "figures": {
+            "formats": [
+              "pdf",
+              "png"
+            ],
+            "dpi": 200
+          },
+          "models": [
+            {
+              "name": "llama-3.1-8b-instruct",
+              "hf_id": "meta-llama/Llama-3.1-8B-Instruct",
+              "role": "generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "gated": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "gemma-3-12b-it",
+              "hf_id": "google/gemma-3-12b-it",
+              "role": "generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "gated": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "qwen3-8b",
+              "hf_id": "Qwen/Qwen3-8B",
+              "role": "multilingual-generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096,
+              "disable_thinking": true
+            },
+            {
+              "name": "sarvam-m",
+              "hf_id": "sarvamai/sarvam-m",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "quantization": "fp8",
+              "max_model_len": 4096
+            },
+            {
+              "name": "airavata-7b",
+              "hf_id": "ai4bharat/Airavata",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "nanda-10b-chat",
+              "hf_id": "MBZUAI/Llama-3-Nanda-10B-Chat",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "claude-opus-5",
+              "hf_id": null,
+              "api_model": "claude-opus-5",
+              "role": "frontier-reference",
+              "backend": "anthropic",
+              "enabled": false
+            }
+          ]
+        },
+        "args": {
+          "command": "build-data",
+          "config": [
+            "configs/models.yaml"
+          ],
+          "overrides": [],
+          "run_id": "20260731-120300",
+          "run_prefix": null,
+          "log_level": "INFO",
+          "no_progress": false,
+          "task": [],
+          "force": false
+        }
+      }
+    },
+    "inference": {
+      "started_at": "2026-07-31T13:42:45+0000",
+      "config": {
+        "config": {
+          "seed": 20260730,
+          "data": {
+            "out_dir": "data/suite",
+            "noisy_samples": 3,
+            "roundtrip_threshold": 0.95,
+            "milu": {
+              "enabled": true,
+              "hf_dataset": "ai4bharat/MILU",
+              "split": "test",
+              "languages": [
+                "Hindi",
+                "Tamil",
+                "Telugu",
+                "Bengali",
+                "Marathi"
+              ],
+              "n_per_language": 60
+            },
+            "math": {
+              "enabled": true,
+              "hf_dataset": "juletxara/mgsm",
+              "split": "test",
+              "languages": [
+                "bn",
+                "te"
+              ],
+              "n_per_language": 150,
+              "indicgenbench": {
+                "enabled": false,
+                "hf_dataset": "ai4bharat/IndicGenBench_crosssum_in",
+                "languages": [
+                  "hi"
+                ],
+                "n_per_language": 150
+              }
+            },
+            "ifeval": {
+              "enabled": true,
+              "n_items": 100,
+              "language": "hi"
+            },
+            "safety": {
+              "enabled": true,
+              "hf_dataset": "DAMO-NLP-SG/MultiJail",
+              "split": "train",
+              "languages": [
+                "bn"
+              ],
+              "n_items": 100,
+              "translate_to": [],
+              "translate_with": "ai4bharat/indictrans2-en-indic-1B",
+              "local_file": null
+            },
+            "dakshina": {
+              "enabled": false,
+              "auto_download": false,
+              "root": "data/dakshina",
+              "url": "https://storage.googleapis.com/gresearch/dakshina/dakshina_dataset_v1.0.tar",
+              "splits": [
+                "train",
+                "dev"
+              ],
+              "calibrate_max_pairs": 20000
+            },
+            "arabizi": {
+              "enabled": false,
+              "hf_dataset": "openai/MMMLU",
+              "hf_config": "AR_XY",
+              "split": "test",
+              "n_items": 100
+            }
+          },
+          "transforms": {
+            "clean_roman": {
+              "scheme": "ISO",
+              "strip_diacritics": true
+            },
+            "noisy_roman": {
+              "char_swap": 0.03,
+              "sms_isms": 0.25,
+              "aspiration_drop": 0.038,
+              "gemination_collapse": 0.294,
+              "long_vowel_collapse": 0.356,
+              "schwa_deletion": 0.052,
+              "sibilant_swap": 0.179,
+              "vowel_ending_drop": 0.353
+            },
+            "noisy_roman_by_language": {
+              "bn": {
+                "aspiration_drop": 0.054,
+                "gemination_collapse": 0.207,
+                "long_vowel_collapse": 0.441,
+                "schwa_deletion": 0.063,
+                "sibilant_swap": 0.242,
+                "vowel_ending_drop": 0.494
+              },
+              "hi": {
+                "aspiration_drop": 0.013,
+                "gemination_collapse": 0.233,
+                "long_vowel_collapse": 0.364,
+                "schwa_deletion": 0.116,
+                "sibilant_swap": 0.038,
+                "vowel_ending_drop": 0.536
+              },
+              "mr": {
+                "aspiration_drop": 0.01,
+                "gemination_collapse": 0.137,
+                "long_vowel_collapse": 0.222,
+                "schwa_deletion": 0.072,
+                "sibilant_swap": 0.059,
+                "vowel_ending_drop": 0.438
+              },
+              "ta": {
+                "gemination_collapse": 0.408,
+                "long_vowel_collapse": 0.0,
+                "schwa_deletion": 0.007,
+                "sibilant_swap": 0.333,
+                "vowel_ending_drop": 0.141
+              },
+              "te": {
+                "aspiration_drop": 0.092,
+                "gemination_collapse": 0.096,
+                "long_vowel_collapse": 0.333,
+                "schwa_deletion": 0.007,
+                "sibilant_swap": 0.34,
+                "vowel_ending_drop": 0.015
+              }
+            },
+            "native_noisy": {
+              "matra_drop": 0.12,
+              "matra_swap": 0.12,
+              "nukta_drop": 0.3,
+              "anusvara_swap": 0.25,
+              "char_swap": 0.03,
+              "virama_drop": 0.08
+            },
+            "codemix": {
+              "insertion_rate": 0.3,
+              "max_insertions": 6
+            }
+          },
+          "inference": {
+            "backend": "vllm",
+            "batch_size": 32,
+            "max_new_tokens": {
+              "milu": 24,
+              "math": 512,
+              "ifeval": 640,
+              "safety": 384,
+              "arabizi": 24
+            },
+            "temperature": 0.0,
+            "top_p": 1.0,
+            "checkpoint_every": 10,
+            "isolate_models": "never",
+            "continue_on_model_error": true,
+            "min_free_fraction": 0.8,
+            "vllm": {
+              "gpu_memory_utilization": 0.9,
+              "max_model_len": 4096,
+              "dtype": "bfloat16",
+              "enforce_eager": false,
+              "swap_space": 4,
+              "chunk_size": 64
+            }
+          },
+          "metrics": {
+            "out_name": "script_gap_results.parquet",
+            "bootstrap_samples": 2000,
+            "include_text": true
+          },
+          "decompose": {
+            "enabled": true,
+            "n_failures_per_model": 100,
+            "judge_backend": "anthropic",
+            "judge_model": "claude-opus-5",
+            "judge_effort": "high",
+            "human_check_n": 30
+          },
+          "fertility": {
+            "external_tokenizers": [
+              "meta-llama/Llama-3.1-8B-Instruct",
+              "google/gemma-3-12b-it",
+              "Qwen/Qwen3-8B"
+            ],
+            "tiktoken_encodings": [
+              "cl100k_base",
+              "o200k_base"
+            ]
+          },
+          "figures": {
+            "formats": [
+              "pdf",
+              "png"
+            ],
+            "dpi": 200
+          },
+          "models": [
+            {
+              "name": "llama-3.1-8b-instruct",
+              "hf_id": "meta-llama/Llama-3.1-8B-Instruct",
+              "role": "generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "gated": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "gemma-3-12b-it",
+              "hf_id": "google/gemma-3-12b-it",
+              "role": "generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "gated": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "qwen3-8b",
+              "hf_id": "Qwen/Qwen3-8B",
+              "role": "multilingual-generalist",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096,
+              "disable_thinking": true
+            },
+            {
+              "name": "sarvam-m",
+              "hf_id": "sarvamai/sarvam-m",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "quantization": "fp8",
+              "max_model_len": 4096
+            },
+            {
+              "name": "airavata-7b",
+              "hf_id": "ai4bharat/Airavata",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "nanda-10b-chat",
+              "hf_id": "MBZUAI/Llama-3-Nanda-10B-Chat",
+              "role": "indic-specialised",
+              "backend": "vllm",
+              "enabled": true,
+              "max_model_len": 4096
+            },
+            {
+              "name": "claude-opus-5",
+              "hf_id": null,
+              "api_model": "claude-opus-5",
+              "role": "frontier-reference",
+              "backend": "anthropic",
+              "enabled": false
+            }
+          ]
+        },
+        "args": {
+          "command": "run-inference",
+          "config": [
+            "configs/models.yaml"
+          ],
+          "overrides": [
+            "inference.isolate_models=never"
+          ],
+          "run_id": "20260731-120300",
+          "run_prefix": null,
+          "log_level": "INFO",
+          "no_progress": false,
+          "model": [
+            "nanda-10b-chat"
+          ],
+          "task": [],
+          "condition": [],
+          "language": [],
+          "limit": null,
+          "max_seconds": null,
+          "include_disabled": false
+        },
+        "models": [
+          {
+            "name": "nanda-10b-chat",
+            "hf_id": "MBZUAI/Llama-3-Nanda-10B-Chat",
+            "api_model": null,
+            "role": "indic-specialised",
+            "backend": "vllm",
+            "enabled": true,
+            "gated": false,
+            "quantization": null,
+            "max_model_len": 4096,
+            "dtype": null,
+            "disable_thinking": false,
+            "resolved_path": "/workspace/Position-Script-Is-the-Missing-Interface/models/nanda-10b-chat",
+            "downloaded": true
+          }
+        ]
+      }
+    },
+    "fertility": {
+      "started_at": "2026-07-31T14:03:39+0000",
+      "config": {
+        "config": {
+          "external_tokenizers": [
+            "meta-llama/Llama-3.1-8B-Instruct",
+            "google/gemma-3-12b-it",
+            "Qwen/Qwen3-8B"
+          ],
+          "tiktoken_encodings": [
+            "cl100k_base",
+            "o200k_base"
+          ]
+        },
+        "args": {
+          "command": "fertility",
+          "config": [
+            "configs/models.yaml"
+          ],
+          "overrides": [],
+          "run_id": "20260731-120300",
+          "run_prefix": null,
+          "log_level": "INFO",
+          "no_progress": false,
+          "task": [],
+          "include_disabled": false
+        }
+      }
+    },
+    "metrics": {
+      "started_at": "2026-07-31T14:05:06+0000",
+      "config": {
+        "args": {
+          "command": "metrics",
+          "config": [
+            "configs/models.yaml"
+          ],
+          "overrides": [],
+          "run_id": "20260731-120300",
+          "run_prefix": null,
+          "log_level": "INFO",
+          "no_progress": false,
+          "no_gate": false
+        },
+        "specialised_models": [
+          "sarvam-m",
+          "airavata-7b",
+          "nanda-10b-chat"
+        ]
+      }
+    },
+    "figures": {
+      "started_at": "2026-07-31T14:05:21+0000",
+      "config": {
+        "formats": [
+          "pdf",
+          "png"
+        ],
+        "dpi": 200,
+        "theme": "light"
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "records": 60,
+  "model": "airavata-7b",
+  "shard": "milu__ta__native",
+  "generated": 60,
+  "resumed": 0,
+  "correct": 0,
+  "parse_failed": 60,
+  "truncated": 0,
+  "stale_regenerated": 0
+}

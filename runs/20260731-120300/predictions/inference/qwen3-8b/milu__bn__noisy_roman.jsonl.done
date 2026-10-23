@@ -1,0 +1,11 @@
+{
+  "records": 180,
+  "model": "qwen3-8b",
+  "shard": "milu__bn__noisy_roman",
+  "generated": 180,
+  "resumed": 0,
+  "correct": 51,
+  "parse_failed": 12,
+  "truncated": 14,
+  "stale_regenerated": 0
+}

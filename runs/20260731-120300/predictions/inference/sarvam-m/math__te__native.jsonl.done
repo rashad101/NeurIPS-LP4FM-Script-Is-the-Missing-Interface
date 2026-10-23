@@ -1,0 +1,11 @@
+{
+  "records": 150,
+  "model": "sarvam-m",
+  "shard": "math__te__native",
+  "generated": 150,
+  "resumed": 0,
+  "correct": 80,
+  "parse_failed": 0,
+  "truncated": 83,
+  "stale_regenerated": 0
+}

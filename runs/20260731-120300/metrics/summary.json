@@ -1,0 +1,140 @@
+{
+  "rows_total": 43200,
+  "rows_excluded_by_gate": 1458,
+  "conditions": [
+    "native",
+    "clean_roman",
+    "noisy_roman",
+    "native_noisy",
+    "codemix",
+    "attested_roman"
+  ],
+  "accuracy_by_model_condition": {
+    "clean_roman": {
+      "airavata-7b": 0.015,
+      "gemma-3-12b-it": 0.3717,
+      "llama-3.1-8b-instruct": 0.2711,
+      "nanda-10b-chat": 0.1951,
+      "qwen3-8b": 0.2905,
+      "sarvam-m": 0.0883
+    },
+    "codemix": {
+      "airavata-7b": 0.0149,
+      "gemma-3-12b-it": 0.6005,
+      "llama-3.1-8b-instruct": 0.447,
+      "nanda-10b-chat": 0.3418,
+      "qwen3-8b": 0.491,
+      "sarvam-m": 0.1375
+    },
+    "native": {
+      "airavata-7b": 0.0162,
+      "gemma-3-12b-it": 0.6384,
+      "llama-3.1-8b-instruct": 0.4619,
+      "nanda-10b-chat": 0.35,
+      "qwen3-8b": 0.516,
+      "sarvam-m": 0.1549
+    },
+    "native_noisy": {
+      "airavata-7b": 0.015,
+      "gemma-3-12b-it": 0.526,
+      "llama-3.1-8b-instruct": 0.4073,
+      "nanda-10b-chat": 0.2889,
+      "qwen3-8b": 0.4324,
+      "sarvam-m": 0.1151
+    },
+    "noisy_roman": {
+      "airavata-7b": 0.0179,
+      "gemma-3-12b-it": 0.3485,
+      "llama-3.1-8b-instruct": 0.2498,
+      "nanda-10b-chat": 0.1707,
+      "qwen3-8b": 0.2944,
+      "sarvam-m": 0.085
+    }
+  },
+  "h1_mean_gap_by_condition": {
+    "clean_roman": 0.151,
+    "codemix": 0.0175,
+    "native_noisy": 0.0588,
+    "noisy_roman": 0.1619
+  },
+  "h1_mean_gap_by_model_condition": {
+    "clean_roman": {
+      "airavata-7b": 0.0012,
+      "gemma-3-12b-it": 0.2667,
+      "llama-3.1-8b-instruct": 0.1908,
+      "nanda-10b-chat": 0.1549,
+      "qwen3-8b": 0.2256,
+      "sarvam-m": 0.0666
+    },
+    "codemix": {
+      "airavata-7b": 0.0014,
+      "gemma-3-12b-it": 0.0378,
+      "llama-3.1-8b-instruct": 0.0149,
+      "nanda-10b-chat": 0.0082,
+      "qwen3-8b": 0.0251,
+      "sarvam-m": 0.0174
+    },
+    "native_noisy": {
+      "airavata-7b": 0.0012,
+      "gemma-3-12b-it": 0.1123,
+      "llama-3.1-8b-instruct": 0.0546,
+      "nanda-10b-chat": 0.0611,
+      "qwen3-8b": 0.0836,
+      "sarvam-m": 0.0398
+    },
+    "noisy_roman": {
+      "airavata-7b": -0.0017,
+      "gemma-3-12b-it": 0.2898,
+      "llama-3.1-8b-instruct": 0.2121,
+      "nanda-10b-chat": 0.1793,
+      "qwen3-8b": 0.2217,
+      "sarvam-m": 0.0699
+    }
+  },
+  "h2_specialised_gap_spread": {
+    "mean_std_across_models": 0.0643,
+    "mean_range_across_models": 0.1181,
+    "max_range": 0.4376,
+    "n_cells": 32
+  },
+  "h3_clean_minus_noisy_by_task": {
+    "ifeval": -0.0022,
+    "math": 0.0148,
+    "milu": 0.0119
+  },
+  "h4_refusal_by_condition": {
+    "clean_roman": 0.1917,
+    "codemix": 0.3276,
+    "native": 0.2933,
+    "native_noisy": 0.2728,
+    "noisy_roman": 0.175
+  },
+  "h6_clean_roman_token_ratio_by_tokeniser": {
+    "airavata-7b": 0.5677,
+    "external:Qwen/Qwen3-8B": 0.4058,
+    "external:google/gemma-3-12b-it": 1.3411,
+    "external:meta-llama/Llama-3.1-8B-Instruct": 0.4547,
+    "gemma-3-12b-it": 1.3411,
+    "llama-3.1-8b-instruct": 0.4547,
+    "nanda-10b-chat": 0.7285,
+    "qwen3-8b": 0.4058,
+    "sarvam-m": 0.9437,
+    "tiktoken:cl100k_base": 0.3554,
+    "tiktoken:o200k_base": 1.0611
+  },
+  "rows_dropped_as_native_duplicates": {
+    "codemix": 3012,
+    "native_noisy": 234
+  },
+  "noisy_roman_noop_rate": 0.0052,
+  "truncation_rate_by_condition": {
+    "clean_roman": 0.3023,
+    "codemix": 0.296,
+    "native": 0.2933,
+    "native_noisy": 0.3212,
+    "noisy_roman": 0.299
+  },
+  "truncation_rate_overall": 0.3058,
+  "truncation_spread_across_conditions": 0.0279,
+  "truncation_min_rows_per_condition": 4800
+}

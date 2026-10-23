@@ -1,0 +1,78 @@
+# Fits the spec's compute envelope: 1x 48 GB GPU, <= 24h, inference only.
+#
+#   ./run.sh -c configs/models.yaml -c configs/budget.yaml --max-seconds 36000
+#
+# Arithmetic (see README "Planning the compute"):
+#   items  = 200 (MILU) + 160 (MGSM) + 80 (IFEval) + 80 (safety) = 520
+#   cells  = 5 conditions + (2 - 1) x 2 multi-sample conditions   = 7 per item
+#   per model                                                    = 3,640
+#   x 5 models                                                   = 18,200 generations
+#
+# Item counts are sized so that **three** Indic-specialised models fit inside the
+# same budget: H2 is a variance claim, and a spread estimated from two points is
+# not worth the GPU time. The default config is larger (9 cells/item, 6 models,
+# ~43k generations); use it when you have more than one GPU-day.
+
+data:
+  noisy_samples: 2
+  milu:
+    n_per_language: 40        # 5 x 40 = 200
+  math:
+    n_per_language: 80        # 2 x 80 = 160
+  ifeval:
+    n_items: 80
+  safety:
+    n_items: 80
+
+inference:
+  max_new_tokens:
+    milu: 16
+    math: 384
+    ifeval: 512
+    safety: 320
+  vllm:
+    chunk_size: 128           # fewer, larger vLLM batches
+
+# Five models: one generalist baseline, one multilingual generalist, and the
+# three Indic-specialised models H2's variance claim needs.
+#
+# NOTE: a `models:` list *replaces* rather than merges, so layer this file after
+# configs/models.yaml:  -c configs/models.yaml -c configs/budget.yaml
+models:
+  - name: llama-3.1-8b-instruct
+    hf_id: meta-llama/Llama-3.1-8B-Instruct
+    role: generalist
+    backend: vllm
+    enabled: true
+    gated: true
+    max_model_len: 4096
+
+  - name: qwen3-8b
+    hf_id: Qwen/Qwen3-8B
+    role: multilingual-generalist
+    backend: vllm
+    enabled: true
+    max_model_len: 4096
+    disable_thinking: true
+
+  - name: sarvam-m
+    hf_id: sarvamai/sarvam-m
+    role: indic-specialised
+    backend: vllm
+    enabled: true
+    quantization: fp8         # 24B: bf16 weights alone exceed 48 GB
+    max_model_len: 4096
+
+  - name: airavata-7b
+    hf_id: ai4bharat/Airavata
+    role: indic-specialised
+    backend: vllm
+    enabled: true
+    max_model_len: 4096
+
+  - name: nanda-10b-chat
+    hf_id: MBZUAI/Llama-3-Nanda-10B-Chat
+    role: indic-specialised
+    backend: vllm
+    enabled: true
+    max_model_len: 4096

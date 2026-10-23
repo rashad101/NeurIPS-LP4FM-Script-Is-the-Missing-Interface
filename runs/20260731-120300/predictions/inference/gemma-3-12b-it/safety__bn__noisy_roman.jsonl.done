@@ -1,0 +1,11 @@
+{
+  "records": 300,
+  "model": "gemma-3-12b-it",
+  "shard": "safety__bn__noisy_roman",
+  "generated": 300,
+  "resumed": 0,
+  "correct": 0,
+  "parse_failed": 0,
+  "truncated": 71,
+  "stale_regenerated": 0
+}

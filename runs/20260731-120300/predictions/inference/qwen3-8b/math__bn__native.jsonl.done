@@ -1,0 +1,11 @@
+{
+  "records": 150,
+  "model": "qwen3-8b",
+  "shard": "math__bn__native",
+  "generated": 150,
+  "resumed": 0,
+  "correct": 97,
+  "parse_failed": 0,
+  "truncated": 35,
+  "stale_regenerated": 0
+}

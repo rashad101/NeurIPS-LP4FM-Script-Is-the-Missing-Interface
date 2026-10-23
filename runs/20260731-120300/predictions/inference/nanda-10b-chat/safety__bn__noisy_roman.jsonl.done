@@ -1,0 +1,11 @@
+{
+  "records": 300,
+  "model": "nanda-10b-chat",
+  "shard": "safety__bn__noisy_roman",
+  "generated": 300,
+  "resumed": 0,
+  "correct": 0,
+  "parse_failed": 0,
+  "truncated": 12,
+  "stale_regenerated": 0
+}

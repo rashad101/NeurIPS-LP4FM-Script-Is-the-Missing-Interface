@@ -1,0 +1,268 @@
+# Script Is the Missing Interface — default experiment configuration.
+#
+# Every value here can be overridden on the command line:
+#   scriptgap build-data --set data.milu.n_per_language=10
+# or by layering another YAML file:
+#   scriptgap run-inference -c configs/smoke.yaml
+
+seed: 20260730
+
+# ---------------------------------------------------------------------------
+# Data construction (spec §4)
+# ---------------------------------------------------------------------------
+data:
+  # Written to data/suite/ ; consumed by every later stage.
+  out_dir: data/suite
+
+  # Stochastic transforms are sampled this many times per item (spec §4.3).
+  noisy_samples: 3
+
+  # Back-transliteration gate (spec §4): keep an item only when the clean
+  # romanisation round-trips back to native script above this similarity.
+  # Reported per language; items below the threshold are flagged, not deleted,
+  # so the paper can report "gaps on passing items only".
+  roundtrip_threshold: 0.95
+
+  # --- knowledge / MCQ: MILU -----------------------------------------------
+  milu:
+    enabled: true
+    hf_dataset: ai4bharat/MILU
+    split: test
+    # MILU config names are language names.
+    languages: [Hindi, Tamil, Telugu, Bengali, Marathi]
+    n_per_language: 60           # 5 x 60 = 300 items (spec §4)
+
+  # --- reasoning / math: MGSM ---------------------------------------------
+  math:
+    enabled: true
+    hf_dataset: juletxara/mgsm
+    split: test
+    # MGSM ships Bengali and Telugu among the Indic languages. Hindi is added
+    # from IndicGenBench when `hindi_fallback` is available, otherwise the
+    # suite runs with the two languages that exist and says so in the log.
+    languages: [bn, te]
+    n_per_language: 150          # spec §4: 150 x N languages
+    indicgenbench:
+      enabled: false             # set true to add hi/ta/mr from IndicGenBench
+      hf_dataset: ai4bharat/IndicGenBench_crosssum_in
+      languages: [hi]
+      n_per_language: 150
+
+  # --- instruction following: verifiable Hindi IFEval-style ---------------
+  ifeval:
+    enabled: true
+    n_items: 100                 # spec §4
+    language: hi
+
+  # --- safety: MultiJail --------------------------------------------------
+  safety:
+    enabled: true
+    hf_dataset: DAMO-NLP-SG/MultiJail
+    split: train
+    # MultiJail's Indic coverage is Bengali; Hindi is produced either by
+    # `translate_with` (IndicTrans2, downloaded into models/) or by pointing
+    # `local_file` at your own verified translation.
+    languages: [bn]
+    n_items: 100                 # spec §4
+    translate_to: []             # e.g. [hi] to machine-translate the en column
+    translate_with: ai4bharat/indictrans2-en-indic-1B
+    local_file: null             # path to a JSONL of {id, lang, prompt, category}
+
+  # --- attested human romanisation: Dakshina ------------------------------
+  # Answers the strongest objection to the synthetic transforms: Dakshina's
+  # lexicons are native-speaker romanisations, not rules. Enabling this adds an
+  # opt-in sixth condition (`attested_roman`) alongside the five released ones,
+  # and makes `scriptgap calibrate` available to fit the condition-3 operator
+  # probabilities to the attested register instead of hand-setting them.
+  #
+  # The archive is ~2 GB to read; only the lexicon TSVs are kept (tens of MB).
+  dakshina:
+    enabled: false
+    auto_download: false        # or: scriptgap download --dakshina
+    root: data/dakshina
+    url: https://storage.googleapis.com/gresearch/dakshina/dakshina_dataset_v1.0.tar
+    splits: [train, dev]        # `test` is held out for anyone training on this
+    # Cap on pairs examined per language during calibration.
+    calibrate_max_pairs: 20000
+
+  # --- universality sidebar: Arabizi (spec §6 figure 6) ------------------
+  arabizi:
+    enabled: false               # opt-in; adds a 100-item Arabic sidebar
+    hf_dataset: openai/MMMLU
+    hf_config: AR_XY
+    split: test
+    n_items: 100
+
+# ---------------------------------------------------------------------------
+# Orthographic transforms
+# ---------------------------------------------------------------------------
+transforms:
+  clean_roman:
+    # Aksharamukha target scheme. ISO gives a reversible diacritic form which
+    # we use for the round-trip gate; the emitted string is the de-diacriticised
+    # reading-friendly form, which is what users actually type.
+    scheme: ISO
+    strip_diacritics: true
+
+  noisy_roman:
+    # FITTED, not hand-set: measured against Dakshina's native-speaker
+    # romanisations by `scriptgap calibrate` over bn, hi, mr, ta, te
+    # (27,500 native words and 48k-99k attested spellings per language).
+    # Regenerate with:  scriptgap calibrate
+    #
+    # These pooled values are the fallback; `noisy_roman_by_language` below is
+    # what actually applies to the five calibrated languages.
+    #
+    # `char_swap` and `sms_isms` are NOT fitted and stay hand-set: Dakshina's
+    # lexicons are single-word native->roman pairs, which cannot exhibit
+    # adjacent-key transposition or English chat spellings. Do not delete them
+    # when pasting in a fresh calibration — `scriptgap calibrate` only emits the
+    # six operators it can measure, and an absent key means the operator is off.
+    char_swap: 0.03              # adjacent transposition (typing noise)
+    sms_isms: 0.25               # you->u, are->r, please->plz
+    aspiration_drop: 0.038
+    gemination_collapse: 0.294
+    long_vowel_collapse: 0.356
+    schwa_deletion: 0.052
+    sibilant_swap: 0.179
+    vowel_ending_drop: 0.353
+
+  # Per-language, because the attested rates are nowhere near uniform:
+  # final-vowel dropping runs at 0.536 in Hindi and 0.015 in Telugu (35x),
+  # and sibilant confusion runs the other way. A single global set would inject
+  # Hindi-shaped noise into Telugu items and inflate that language's gap with
+  # spellings no Telugu speaker produces.
+  noisy_roman_by_language:
+    bn:
+      aspiration_drop: 0.054
+      gemination_collapse: 0.207
+      long_vowel_collapse: 0.441
+      schwa_deletion: 0.063
+      sibilant_swap: 0.242
+      vowel_ending_drop: 0.494
+    hi:
+      aspiration_drop: 0.013
+      gemination_collapse: 0.233
+      long_vowel_collapse: 0.364
+      schwa_deletion: 0.116
+      sibilant_swap: 0.038
+      vowel_ending_drop: 0.536
+    mr:
+      aspiration_drop: 0.01
+      gemination_collapse: 0.137
+      long_vowel_collapse: 0.222
+      schwa_deletion: 0.072
+      sibilant_swap: 0.059
+      vowel_ending_drop: 0.438
+    ta:
+      gemination_collapse: 0.408
+      long_vowel_collapse: 0.0
+      schwa_deletion: 0.007
+      sibilant_swap: 0.333
+      vowel_ending_drop: 0.141
+    te:
+      aspiration_drop: 0.092
+      gemination_collapse: 0.096
+      long_vowel_collapse: 0.333
+      schwa_deletion: 0.007
+      sibilant_swap: 0.34
+      vowel_ending_drop: 0.015
+
+  native_noisy:
+    # Script-internal noise: the fourth axis of the §2 taxonomy.
+    # NOT corpus-fitted — Dakshina provides native->roman pairs, so it can
+    # calibrate condition 3 but not this one. There is no comparable corpus of
+    # attested native-script misspellings. Treat these as a parameter to sweep.
+    matra_drop: 0.12
+    matra_swap: 0.12
+    nukta_drop: 0.30
+    anusvara_swap: 0.25          # anusvara <-> conjunct nasal
+    char_swap: 0.03
+    virama_drop: 0.08
+
+  codemix:
+    # Matrix language stays Indic; English content words are inserted subject
+    # to the free-morpheme constraint (we only replace bare, un-suffixed words).
+    insertion_rate: 0.30
+    max_insertions: 6
+
+# ---------------------------------------------------------------------------
+# Inference
+# ---------------------------------------------------------------------------
+inference:
+  backend: vllm                  # vllm | hf | anthropic
+  batch_size: 32                 # hf backend only; vLLM batches internally
+  max_new_tokens:
+    milu: 24
+    math: 512
+    ifeval: 640
+    safety: 384
+    arabizi: 24
+  temperature: 0.0
+  top_p: 1.0
+  checkpoint_every: 10           # flush+fsync the shard every N generations
+
+  # Only one model is ever resident: the driver loads a model, runs all of its
+  # shards, tears it down and verifies the card is free, then loads the next.
+  #
+  # `isolate_models` decides *how* that teardown is guaranteed:
+  #   auto   - a child process per model when the backend is vLLM and there is
+  #            more than one model (the default; vLLM does not reliably hand
+  #            back its CUDA context in-process)
+  #   always - always one process per model
+  #   never  - in-process teardown only
+  # Isolation is safe because every shard is checkpointed: a child writes into
+  # the same run directory and a failure resumes exactly as an in-process one.
+  isolate_models: auto
+  # One model failing (OOM, missing weights, a bad quantisation combination)
+  # should not cost the remaining models on an unattended multi-hour run. The
+  # failure is logged, recorded in the run summary, and the roster continues.
+  continue_on_model_error: true
+  # Treat the card as reclaimed once this fraction is free again. Lower it if
+  # something else on the box holds a persistent allocation.
+  min_free_fraction: 0.80
+  # vLLM engine defaults for a single 48 GB card.
+  vllm:
+    gpu_memory_utilization: 0.90
+    max_model_len: 4096
+    dtype: bfloat16
+    enforce_eager: false
+    swap_space: 4
+    # Generation is issued in chunks of this size so predictions are written to
+    # disk frequently; vLLM still batches each chunk internally.
+    chunk_size: 64
+
+# ---------------------------------------------------------------------------
+# Metrics
+# ---------------------------------------------------------------------------
+metrics:
+  out_name: script_gap_results.parquet
+  bootstrap_samples: 2000        # CIs on gaps and decomposition shares
+  # Keep prompts and completions in the released parquet. This is what makes the
+  # table re-analysable later (error analysis, re-scoring under a different
+  # parser, qualitative inspection) rather than just a scoreboard. Set false only
+  # if the file size becomes a problem; safety rows never carry text either way.
+  include_text: true
+
+# H5: failure-mode decomposition (misunderstood-topic vs understood-but-wrong)
+decompose:
+  enabled: true
+  n_failures_per_model: 100      # spec §5
+  judge_backend: anthropic
+  judge_model: claude-opus-5
+  judge_effort: high
+  human_check_n: 30              # sampled to data/human_check/ for annotation
+
+# H6: native-vs-roman fertility
+fertility:
+  # Model tokenizers are taken from the evaluated models automatically; these
+  # are the additional external tokenizers named in spec §5.
+  external_tokenizers:
+    - meta-llama/Llama-3.1-8B-Instruct
+    - google/gemma-3-12b-it
+    - Qwen/Qwen3-8B
+  tiktoken_encodings: [cl100k_base, o200k_base]
+
+figures:
+  formats: [pdf, png]
+  dpi: 200

@@ -1,0 +1,11 @@
+{
+  "records": 100,
+  "model": "qwen3-8b",
+  "shard": "safety__bn__codemix",
+  "generated": 100,
+  "resumed": 0,
+  "correct": 0,
+  "parse_failed": 0,
+  "truncated": 93,
+  "stale_regenerated": 0
+}

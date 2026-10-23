@@ -1,0 +1,11 @@
+{
+  "records": 150,
+  "model": "llama-3.1-8b-instruct",
+  "shard": "math__te__clean_roman",
+  "generated": 150,
+  "resumed": 0,
+  "correct": 10,
+  "parse_failed": 1,
+  "truncated": 50,
+  "stale_regenerated": 0
+}

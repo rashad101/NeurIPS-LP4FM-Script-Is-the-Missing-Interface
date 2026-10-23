@@ -1,0 +1,11 @@
+{
+  "records": 150,
+  "model": "nanda-10b-chat",
+  "shard": "math__te__codemix",
+  "generated": 150,
+  "resumed": 0,
+  "correct": 37,
+  "parse_failed": 0,
+  "truncated": 8,
+  "stale_regenerated": 0
+}

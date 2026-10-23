@@ -1,0 +1,4 @@
+{
+  "records": 800,
+  "tokeniser": "tiktoken:o200k_base"
+}

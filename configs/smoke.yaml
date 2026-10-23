@@ -1,0 +1,43 @@
+# Tiny end-to-end configuration for verifying the pipeline before the GPU day.
+#
+#   scriptgap build-data    -c configs/smoke.yaml
+#   scriptgap run-inference -c configs/smoke.yaml -c configs/smoke-models.yaml
+#
+# Everything is small enough to run on a laptop CPU in a couple of minutes.
+
+data:
+  out_dir: data/suite_smoke
+  noisy_samples: 1
+  milu:
+    languages: [Hindi, Bengali]
+    n_per_language: 4
+  math:
+    languages: [bn]
+    n_per_language: 4
+  ifeval:
+    n_items: 4
+  safety:
+    enabled: false        # keep unsafe prompts out of smoke tests
+  arabizi:
+    enabled: false
+
+inference:
+  backend: hf
+  batch_size: 2
+  # Big enough that generations finish rather than hitting the cap. A smoke run
+  # reporting "100% truncated" looks like a broken pipeline and masks real
+  # failures, which defeats the point of a smoke test.
+  max_new_tokens:
+    milu: 24
+    math: 512
+    ifeval: 512
+    safety: 256
+    arabizi: 24
+
+decompose:
+  enabled: false
+  n_failures_per_model: 4
+
+fertility:
+  external_tokenizers: []
+  tiktoken_encodings: [cl100k_base]

@@ -1,0 +1,11 @@
+{
+  "records": 300,
+  "model": "gemma-3-12b-it",
+  "shard": "ifeval__hi__noisy_roman",
+  "generated": 300,
+  "resumed": 0,
+  "correct": 232,
+  "parse_failed": 0,
+  "truncated": 13,
+  "stale_regenerated": 0
+}

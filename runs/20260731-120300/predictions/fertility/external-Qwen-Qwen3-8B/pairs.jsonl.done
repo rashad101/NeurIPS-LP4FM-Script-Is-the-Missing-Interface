@@ -1,0 +1,4 @@
+{
+  "records": 800,
+  "tokeniser": "external:Qwen/Qwen3-8B"
+}

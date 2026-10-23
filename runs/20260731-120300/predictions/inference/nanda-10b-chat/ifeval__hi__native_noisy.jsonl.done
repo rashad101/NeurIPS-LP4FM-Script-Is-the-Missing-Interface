@@ -1,0 +1,11 @@
+{
+  "records": 300,
+  "model": "nanda-10b-chat",
+  "shard": "ifeval__hi__native_noisy",
+  "generated": 300,
+  "resumed": 0,
+  "correct": 114,
+  "parse_failed": 0,
+  "truncated": 16,
+  "stale_regenerated": 0
+}

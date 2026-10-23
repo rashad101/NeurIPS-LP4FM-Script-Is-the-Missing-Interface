@@ -1,0 +1,66 @@
+[project]
+name = "scriptgap"
+version = "0.1.0"
+description = "Script Is the Missing Interface — five-condition script-stratified evaluation suite (LP4FM @ NeurIPS 2026)"
+readme = "README.md"
+requires-python = ">=3.10,<3.13"
+license = { text = "MIT" }
+
+dependencies = [
+    # data / orchestration
+    "datasets>=2.19.0",
+    "huggingface-hub>=0.24.0",
+    "pyyaml>=6.0",
+    "tqdm>=4.66.0",
+    "numpy>=1.26.0",
+    "pandas>=2.1.0",
+    "pyarrow>=15.0.0",          # pandas parquet engine (not imported directly)
+    # orthography transforms (pure-python, no network at runtime)
+    "aksharamukha>=2.1.0",
+    "indic-transliteration>=2.3.0",
+    # tokenizers for the fertility analysis (H6). sentencepiece and protobuf are
+    # not imported here but are required by transformers to load the Llama and
+    # Gemma tokenizers, which H6 needs.
+    "transformers>=4.44.0",
+    "tokenizers>=0.19.0",
+    "sentencepiece>=0.2.0",
+    "protobuf>=4.25.0",
+    "tiktoken>=0.7.0",
+    # figures
+    "matplotlib>=3.8.0",
+]
+
+[project.optional-dependencies]
+# GPU inference stack. Installed by setup_env.sh only when CUDA is present,
+# because vLLM has no macOS/CPU wheels.
+gpu = [
+    "torch>=2.4.0",
+    "vllm>=0.6.0",
+    "accelerate>=0.33.0",
+]
+# CPU-only local inference (small models / smoke tests / Mac development)
+cpu = [
+    "torch>=2.4.0",
+    "accelerate>=0.33.0",
+]
+# API judges and API-served models
+api = [
+    "anthropic>=0.40.0",
+]
+dev = [
+    "pytest>=8.0.0",
+]
+
+[project.scripts]
+scriptgap = "scriptgap.cli:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/scriptgap"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"

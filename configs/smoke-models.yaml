@@ -1,0 +1,10 @@
+# A single tiny ungated model, so the smoke test needs no HF license approval
+# and downloads ~1 GB into models/ rather than tens of GB.
+
+models:
+  - name: qwen2.5-0.5b-instruct
+    hf_id: Qwen/Qwen2.5-0.5B-Instruct
+    role: smoke
+    backend: hf
+    enabled: true
+    max_model_len: 2048

@@ -1,0 +1,11 @@
+{
+  "records": 450,
+  "model": "sarvam-m",
+  "shard": "math__bn__native_noisy",
+  "generated": 450,
+  "resumed": 0,
+  "correct": 203,
+  "parse_failed": 2,
+  "truncated": 269,
+  "stale_regenerated": 0
+}
